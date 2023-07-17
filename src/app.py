@@ -14,6 +14,7 @@ app = FastAPI()
 DEFAULT_CONFIG_CHECKPOINTS = '././checkpoints'
 parser = argparse.ArgumentParser()
 parser.add_argument("--check-points", type=str, default=DEFAULT_CONFIG_CHECKPOINTS)
+parser.add_argument("--host",type=str, default="0.0.0.0")
 parser.add_argument("--port", type=int, default=5040)
 parser.add_argument("--workers", type=int, default=8)
 args = parser.parse_args()
@@ -82,4 +83,4 @@ async def phase1_prob2(input_data: InputData, request: Request):
     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 if __name__ == '__main__':
-    uvicorn.run("src.app:app", host="0.0.0.0", port=args.port, workers=args.workers, reload=False)
+    uvicorn.run("src.app:app", host=args.host, port=args.port, workers=args.workers, reload=False)

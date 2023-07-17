@@ -60,7 +60,6 @@ hyper_parameters['subsample'] = args.subsample
 hyper_parameters['scale_pos_weight'] = args.scale_pos_weight
 hyper_parameters['random_state'] = args.random_state
 df = pd.read_parquet("/mnt/d/Data/MLOPS_2023/data_phase-1/phase-1/prob-2/raw_train.parquet")
-# test = pd.read_csv('/home/duclh3/Workspace/test_phase1_prob2/mlops_phase1_prob2_207c042d-7882-4831-b2bc-1740c5ed739e.csv')
 
 processor = Phase1Prob2FeatureProcessor()
 new_df = processor.fit_transform(df)

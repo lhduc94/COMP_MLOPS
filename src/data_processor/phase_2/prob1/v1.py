@@ -3,10 +3,12 @@ from src.data_processor._base import BaseFeatureProcessor
 import pandas as pd
 
 
-class Phase2Prob1FeatureProcessor(BaseFeatureProcessor, ABC):
-    def __init__(self):
-        super(Phase2Prob1FeatureProcessor, self).__init__()
-        self.FEATURES = ['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6',
+class Phase2Prob1FeatureProcessor(BaseFeatureProcessor):
+    def __init__(self, features=None, categorical_features=None, agg_features=None):
+        super().__init__(features=features, 
+                         categorical_features=categorical_features)
+        if self.FEATURES is None:
+            self.FEATURES = ['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6',
                          'feature7', 'feature8', 'feature9', 'feature10', 'feature11',
                          'feature12', 'feature13', 'feature14', 'feature15', 'feature16',
                          'feature17', 'feature18', 'feature19', 'feature20', 'feature21',
@@ -14,7 +16,8 @@ class Phase2Prob1FeatureProcessor(BaseFeatureProcessor, ABC):
                          'feature27', 'feature28', 'feature29', 'feature30', 'feature31',
                          'feature32', 'feature33', 'feature34', 'feature35', 'feature36',
                          'feature37', 'feature38', 'feature39', 'feature40', 'feature41']
-        self.CATEGORICAL_FEATURES = ["feature2",
+        if self.CATEGORICAL_FEATURES is None:
+            self.CATEGORICAL_FEATURES = ["feature2",
                                      "feature3",
                                      "feature4"]
 
@@ -22,15 +25,8 @@ class Phase2Prob1FeatureProcessor(BaseFeatureProcessor, ABC):
         pass
 
     def transform(self, data:pd.DataFrame)-> pd.DataFrame:
-        # self.FEATURES = [x for x in data.columns if 'feature' in x not in 'feature15']
-        df = self.convert_to_categorical(data)
-        return df[self.FEATURES]
-
-    def fit_transform(self, data:pd.DataFrame)-> pd.DataFrame:
-        self.fit(data)
-        return self.transform(data)
-    def convert_to_categorical(self, data: pd.DataFrame) -> pd.DataFrame:
-        df = data.copy()
-        for col in self.CATEGORICAL_FEATURES:
-            df[col] = df[col].astype('category')
-        return df
+        self.data = data.copy()
+        self.convert_to_categorical()
+        out = self.data.copy()
+        self.flush()
+        return out[self.FEATURES]
