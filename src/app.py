@@ -9,6 +9,9 @@ from src.data_processor.phase_2.prob2.v1 import Phase2Prob2FeatureProcessor
 from src.model_predictor import \
     (Phase1Prob1ModelPredictor, Phase1Prob2ModelPredictor, Phase2Prob1ModelPredictor, Phase2Prob2ModelPredictor)
 import argparse
+import pickle
+from src.drift_detector import drift_psi
+from collections import Counter
 
 app = FastAPI()
 DEFAULT_CONFIG_CHECKPOINTS = '././checkpoints'
@@ -35,6 +38,7 @@ phase2_prob1_pretrained_model = Phase2Prob1ModelPredictor.from_pretrained(args.c
 phase2_prob1_feature_processor = Phase2Prob1FeatureProcessor()
 phase2_prob2_pretrained_model = Phase2Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-2/v1.pkl')
 phase2_prob2_feature_processor = Phase2Prob2FeatureProcessor()
+var_count_train_1 = pickle.load(open(args.check_points + '/phase-2/prob-1/var_count.pkl','rb'))
 @app.get('/')
 def home():
     return "The man Team"
@@ -68,7 +72,9 @@ async def phase2_prob1(input_data: InputData, request: Request):
     data = phase2_prob1_feature_processor.transform(df)
     prediction = phase2_prob1_pretrained_model.predict_proba(data)
     # drift = int(df['feature28'].std() > 0.4)
-    drift = 0
+    var_count_test_1 = Counter(df['feature3'])
+    drift = drift_psi(var_count_train_1, var_count_test_1)
+    # drift = 0
     # df.to_csv(f'test_phase1_prob1/mlops_phase1_prob1_{data.id}.csv', index=False)
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 
@@ -76,9 +82,12 @@ async def phase2_prob1(input_data: InputData, request: Request):
 @app.post('/phase-2/prob-2/predict')
 async def phase1_prob2(input_data: InputData, request: Request):
     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
-    data = phase2_prob2_feature_processor.transform(df)
-    prediction = phase2_prob2_pretrained_model.predict_proba(data)
     drift = int(df['feature28'].std() > 0.4)
+    if not drift:
+        data = phase2_prob2_feature_processor.transform(df)
+        prediction = phase2_prob2_pretrained_model.predict_proba(data)
+    else:
+        prediction = ['Normal']*df.shape[0]
     # drift = 0
     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
