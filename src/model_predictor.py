@@ -45,3 +45,18 @@ class Phase2Prob2ModelPredictor(BaseModelPredictor):
 
     def predict_proba(self, data):
         return self.model.predict(data).tolist()
+    
+class Phase3Prob1ModelPredictor(BaseModelPredictor):
+    def __init__(self, model):
+        super(Phase3Prob1ModelPredictor, self).__init__(model)
+
+    def predict_proba(self, data):
+        return self.model.predict_proba(data)[:, 1].tolist()
+
+
+class Phase3Prob2ModelPredictor(BaseModelPredictor):
+    def __init__(self, model):
+        super(Phase3Prob2ModelPredictor, self).__init__(model)
+
+    def predict_proba(self, data):
+        return self.model.predict(data).tolist()

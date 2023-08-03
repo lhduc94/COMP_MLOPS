@@ -6,8 +6,11 @@ from src.data_processor.phase_1.prob1.v1 import Phase1Prob1FeatureProcessor
 from src.data_processor.phase_1.prob2.v2 import Phase1Prob2FeatureProcessor
 from src.data_processor.phase_2.prob1.v13 import Phase2Prob1FeatureProcessor
 from src.data_processor.phase_2.prob2.v2 import Phase2Prob2FeatureProcessor
+from src.data_processor.phase_3.prob1.v1 import Phase3Prob1FeatureProcessor
+from src.data_processor.phase_3.prob2.v1 import Phase3Prob2FeatureProcessor
+
 from src.model_predictor import \
-    (Phase1Prob1ModelPredictor, Phase1Prob2ModelPredictor, Phase2Prob1ModelPredictor, Phase2Prob2ModelPredictor)
+    (Phase1Prob1ModelPredictor, Phase1Prob2ModelPredictor, Phase2Prob1ModelPredictor, Phase2Prob2ModelPredictor, Phase3Prob1ModelPredictor, Phase3Prob2ModelPredictor)
 import argparse
 import pickle
 from src.drift_detector import drift_psi
@@ -34,10 +37,16 @@ class InputData(BaseModel):
 # phase1_prob2_pretrained_model = Phase1Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-1/prob-2/catboost_v3.pkl')
 # phase1_prob2_feature_processor = Phase1Prob2FeatureProcessor()
 
-phase2_prob1_pretrained_model = Phase2Prob1ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-1/v1.pkl')
-phase2_prob1_feature_processor = Phase2Prob1FeatureProcessor()
-phase2_prob2_pretrained_model = Phase2Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-2/v1.pkl')
-phase2_prob2_feature_processor = Phase2Prob2FeatureProcessor()
+# phase2_prob1_pretrained_model = Phase2Prob1ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-1/v1.pkl')
+# phase2_prob1_feature_processor = Phase2Prob1FeatureProcessor()
+# phase2_prob2_pretrained_model = Phase2Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-2/v1.pkl')
+# phase2_prob2_feature_processor = Phase2Prob2FeatureProcessor()
+
+phase3_prob1_pretrained_model = Phase3Prob1ModelPredictor.from_pretrained(args.check_points + '/phase-3/prob-1/v1.pkl')
+phase3_prob1_feature_processor = Phase3Prob1FeatureProcessor()
+phase3_prob2_pretrained_model = Phase3Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-3/prob-2/v1.pkl')
+phase3_prob2_feature_processor = Phase3Prob2FeatureProcessor()
+
 @app.get('/')
 def home():
     return "The man Team"
@@ -65,23 +74,46 @@ def health():
 #     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
 #     return {'id': input_data.id, 'predictions': prediction, 'drift': 0}
 
-@app.post('/phase-2/prob-1/predict')
-async def phase2_prob1(input_data: InputData, request: Request):
+# @app.post('/phase-2/prob-1/predict')
+# async def phase2_prob1(input_data: InputData, request: Request):
+#     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
+#     data = phase2_prob1_feature_processor.transform(df)
+#     prediction = phase2_prob1_pretrained_model.predict_proba(data)
+#     drift = int(df['feature23'].mean() > 1.5)
+#     # df.to_csv(f'test_phase1_prob1/mlops_phase1_prob1_{data.id}.csv', index=False)
+#     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
+
+
+# @app.post('/phase-2/prob-2/predict')
+# async def phase1_prob2(input_data: InputData, request: Request):
+#     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
+#     data = phase2_prob2_feature_processor.transform(df)
+#     prediction = phase2_prob2_pretrained_model.predict_proba(data)
+#     drift = int(df['feature23'].mean() > 1.5)
+#     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
+#     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
+
+
+
+@app.post('/phase-3/prob-1/predict')
+async def phase3_prob1(input_data: InputData, request: Request):
     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
-    data = phase2_prob1_feature_processor.transform(df)
-    prediction = phase2_prob1_pretrained_model.predict_proba(data)
-    drift = int(df['feature23'].mean() > 1.5)
+    data = phase3_prob1_feature_processor.transform(df)
+    prediction = phase3_prob1_pretrained_model.predict_proba(data)
+    # drift = int(df['feature23'].mean() > 1.5)
     # df.to_csv(f'test_phase1_prob1/mlops_phase1_prob1_{data.id}.csv', index=False)
+    drift = 0
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 
 
-@app.post('/phase-2/prob-2/predict')
+@app.post('/phase-3/prob-2/predict')
 async def phase1_prob2(input_data: InputData, request: Request):
     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
-    data = phase2_prob2_feature_processor.transform(df)
-    prediction = phase2_prob2_pretrained_model.predict_proba(data)
-    drift = int(df['feature23'].mean() > 1.5)
+    data = phase3_prob2_feature_processor.transform(df)
+    prediction = phase3_prob2_pretrained_model.predict_proba(data)
+    # drift = int(df['feature23'].mean() > 1.5)
     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
+    drift = 0
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 if __name__ == '__main__':
     uvicorn.run("src.app:app", host=args.host, port=args.port, workers=args.workers, reload=False)
