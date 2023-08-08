@@ -57,7 +57,6 @@ phase3_prob1_pretrained_model = Phase3Prob1ModelPredictor.from_pretrained(args.c
 phase3_prob1_feature_processor = Phase3Prob1FeatureProcessor()
 phase3_prob2_pretrained_model = Phase3Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-3/prob-2/v1.pkl')
 phase3_prob2_feature_processor = Phase3Prob2FeatureProcessor()
-phase3_prob3_lookup = pd.read_csv(args.check_points + '/phase-3/prob-2/lookup.csv')
 @app.get('/')
 def home():
     return "The man Team"

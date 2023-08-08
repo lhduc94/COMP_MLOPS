@@ -59,4 +59,4 @@ class Phase3Prob2ModelPredictor(BaseModelPredictor):
         super(Phase3Prob2ModelPredictor, self).__init__(model)
 
     def predict_proba(self, data):
-        return self.model.predict(data).tolist()
+        return self.model.predict(data)[:,0].tolist()
