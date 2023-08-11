@@ -57,6 +57,10 @@ phase3_prob1_pretrained_model = Phase3Prob1ModelPredictor.from_pretrained(args.c
 phase3_prob1_feature_processor = Phase3Prob1FeatureProcessor()
 phase3_prob2_pretrained_model = Phase3Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-3/prob-2/v1.pkl')
 phase3_prob2_feature_processor = Phase3Prob2FeatureProcessor()
+with open(f'{args.check_points}/phase-3/prob-1/varcount_v1.pkl','rb') as file:
+    var_count_phase3_prob1 = pickle.load(file)
+with open(f'{args.check_points}/phase-3/prob-2/varcount_v1.pkl','rb') as file:
+    var_count_phase3_prob2 = pickle.load(file)
 @app.get('/')
 def home():
     return "The man Team"
@@ -110,9 +114,11 @@ async def phase3_prob1(input_data: InputData, request: Request):
     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
     data = phase3_prob1_feature_processor.transform(df)
     prediction = phase3_prob1_pretrained_model.predict_proba(data)
-    # drift = int(df['feature23'].mean() > 1.5)
+    # drift = int(df['feature6'].std() > 200)
+    drift = drift_psi(var_count_phase3_prob1, var_test=Counter(df['feature2']))
+
     # df.to_csv(f'test_phase1_prob1/mlops_phase1_prob1_{data.id}.csv', index=False)
-    drift = 0
+    # drift = 0
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 
 
@@ -121,9 +127,10 @@ async def phase1_prob2(input_data: InputData, request: Request):
     df = pd.DataFrame(input_data.rows, columns=input_data.columns)
     data = phase3_prob2_feature_processor.transform(df)
     prediction = phase3_prob2_pretrained_model.predict_proba(data)
-    # drift = int(df['feature23'].mean() > 1.5)
+    # drift = int(df['feature6'].std() > 200)
+    drift = drift_psi(var_count_phase3_prob2, var_test=Counter(df['feature2']))
     # df.to_csv(f'test_phase1_prob2/mlops_phase1_prob2_{data.id}.csv', index=False)
-    drift = 0
+    # drift = 0
     return {'id': input_data.id, 'predictions': prediction, 'drift': drift}
 if __name__ == '__main__':
     uvicorn.run("src.app:app", host=args.host, port=args.port, workers=args.workers, reload=False)
