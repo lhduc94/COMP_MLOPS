@@ -3,7 +3,9 @@ phase2:
 phase3:
   prob1:
     run_id:
+    model_name: phase3_prob1
     model_version: Production
   prob2:
     run_id:
+    model_name: phase3_prob2
     model_version: Production

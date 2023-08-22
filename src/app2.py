@@ -8,15 +8,12 @@ from src.data_processor.phase_2.prob1.v13 import Phase2Prob1FeatureProcessor
 from src.data_processor.phase_2.prob2.v2 import Phase2Prob2FeatureProcessor
 from src.data_processor.phase_3.prob1.v1 import Phase3Prob1FeatureProcessor
 from src.data_processor.phase_3.prob2.v1 import Phase3Prob2FeatureProcessor
-import os
 import argparse
 import pickle
 from src.drift_detector import drift_psi
 from collections import Counter
 import mlflow 
-import yaml
-from yaml.loader import SafeLoader
-from src.utils import get_env
+from src.utils import get_env, load_model_config
 
 env = get_env()
 mlflow.set_tracking_uri(env['MLFOW_TRACKING_URI'])
@@ -26,10 +23,9 @@ parser.add_argument("--host",type=str, default="0.0.0.0")
 parser.add_argument("--port", type=int, default=5040)
 parser.add_argument("--workers", type=int, default=8)
 args = parser.parse_args()
-with open(env['MODEL_CONFIG_PATH']) as f:
-    model_config = yaml.load(f, Loader=SafeLoader)
-PROB3_PHASE1_RUN_ID = model_config['prob3']['phase2']['run_id']
-PROB3_PHASE2_RUN_ID = model_config['prob3']['phase2']['run_id']
+model_config = load_model_config(env)
+PHASE3_PROB1 = model_config['phase3']['prob1']
+PHASE3_PROB2 = model_config['phase3']['prob2']
 
 
 
@@ -43,15 +39,15 @@ PROB3_PHASE2_RUN_ID = model_config['prob3']['phase2']['run_id']
 # phase2_prob2_pretrained_model = Phase2Prob2ModelPredictor.from_pretrained(args.check_points + '/phase-2/prob-2/v1.pkl')
 # phase2_prob2_feature_processor = Phase2Prob2FeatureProcessor()
 
-phase3_prob1_pretrained_model = mlflow.sklearn.load_model("models:/phase3_prob1/Production")
+phase3_prob1_pretrained_model = mlflow.sklearn.load_model(f"models:/{PHASE3_PROB1['model_name']}/{PHASE3_PROB1['model_version']}")
 phase3_prob1_feature_processor = Phase3Prob1FeatureProcessor()
-phase3_prob2_pretrained_model = mlflow.sklearn.load_model("models:/phase3_prob2/Production")
+phase3_prob2_pretrained_model = mlflow.sklearn.load_model(f"models:/{PHASE3_PROB2['model_name']}/{PHASE3_PROB2['model_version']}")
 phase3_prob2_feature_processor = Phase3Prob2FeatureProcessor()
 
-with mlflow.start_run(run_id=PROB3_PHASE1_RUN_ID) as run:
+with mlflow.start_run(run_id=PHASE3_PROB1['run_id']) as run:
     artifact_uri = run.info.artifact_uri
     var_count_phase3_prob1 = mlflow.artifacts.load_dict(artifact_uri + "/feature2_var_count.json")
-with mlflow.start_run(run_id=PROB3_PHASE2_RUN_ID) as run:
+with mlflow.start_run(run_id=PHASE3_PROB2['run_id']) as run:
     artifact_uri = run.info.artifact_uri
     var_count_phase3_prob2 = mlflow.artifacts.load_dict(artifact_uri + "/feature2_var_count.json")
 @app.get('/')
