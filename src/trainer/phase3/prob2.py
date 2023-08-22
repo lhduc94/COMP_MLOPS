@@ -15,6 +15,11 @@ import mlflow
 import mlflow.catboost
 from mlflow.models.signature import infer_signature
 import argparse
+import os
+from src.utils import get_env
+env = get_env()
+print(env)
+mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URL'])
 
 HyperParameters={
                     'iterations':1500, 
@@ -96,7 +101,6 @@ def train_all(hyper_parameters:HyperParameters, df:pd.DataFrame, processor:BaseF
     return gmodel, processor
 
 if __name__ == '__main__':
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
     mlflow.set_experiment("phase3_prob2")
     print("Read file")
     df = pd.read_csv(args.train_data)
@@ -107,8 +111,8 @@ if __name__ == '__main__':
     mlflow.log_params(hyper_parameters)
     mlflow.log_param('sampling',args.sampling)
     processor = Phase3Prob2FeatureProcessor()
-    _, _, oofs, _ = cross_validate(hyper_parameters, df, processor, 'label', sampling=args.sampling)
-    mlflow.log_metric('oof_AUC_score', accuracy_score(df['label'], oofs))
+    # _, _, oofs, _ = cross_validate(hyper_parameters, df, processor, 'label', sampling=args.sampling)
+    # mlflow.log_metric('oof_AUC_score', accuracy_score(df['label'], oofs))
     g_model, g_processor = train_all(hyper_parameters, df, processor, 'label')
     mlflow.sklearn.log_model(g_model, artifact_path='model', registered_model_name='phase3_prob2')
     mlflow.log_dict(g_processor.data_features, 'processor.json')

@@ -15,7 +15,9 @@ import mlflow
 import mlflow.catboost
 from mlflow.models.signature import infer_signature
 import argparse
-
+from src.utils import get_env
+env = get_env()
+mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URL'])
 HyperParameters={
                     'iterations':1500, 
                     'learning_rate':0.7,
@@ -95,7 +97,6 @@ def train_all(hyper_parameters:HyperParameters, df:pd.DataFrame, processor:BaseF
     return gmodel, processor
 
 if __name__ == '__main__':
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
     mlflow.set_experiment("phase3_prob1")
     print("Read file")
     df = pd.read_csv(args.train_data)
