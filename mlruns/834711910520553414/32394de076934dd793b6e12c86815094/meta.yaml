@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Workspace/COMP_MLOPS/mlruns/834711910520553414/32394de076934dd793b6e12c86815094/artifacts
+end_time: 1692694699755
+entry_point_name: ''
+experiment_id: '834711910520553414'
+lifecycle_stage: active
+run_id: 32394de076934dd793b6e12c86815094
+run_name: secretive-colt-704
+run_uuid: 32394de076934dd793b6e12c86815094
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1692694699722
+status: 3
+tags: []
+user_id: ADMIN

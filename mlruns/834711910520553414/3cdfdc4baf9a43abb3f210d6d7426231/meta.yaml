@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Workspace/COMP_MLOPS/mlruns/834711910520553414/3cdfdc4baf9a43abb3f210d6d7426231/artifacts
+end_time: 1692694752205
+entry_point_name: ''
+experiment_id: '834711910520553414'
+lifecycle_stage: active
+run_id: 3cdfdc4baf9a43abb3f210d6d7426231
+run_name: bright-auk-366
+run_uuid: 3cdfdc4baf9a43abb3f210d6d7426231
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1692694752173
+status: 3
+tags: []
+user_id: ADMIN

@@ -17,7 +17,7 @@ from mlflow.models.signature import infer_signature
 import argparse
 from src.utils import get_env
 env = get_env()
-mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URL'])
+mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URI'])
 HyperParameters={
                     'iterations':1500, 
                     'learning_rate':0.7,
@@ -26,7 +26,6 @@ HyperParameters={
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--train-data",type=str,required=True)
-parser.add_argument("--test-tiny",type=str,default=None)
 # parser.add_argument("--model-path",type=str,required=True)
 # parser.add_argument("--processor-path", type=str,required=True)
 parser.add_argument("--iterations", type=int, default=HyperParameters['iterations'])

@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Workspace/COMP_MLOPS/mlruns/834711910520553414/af0bb5489df743e7832a7e128c43bfea/artifacts
+end_time: 1692694770948
+entry_point_name: ''
+experiment_id: '834711910520553414'
+lifecycle_stage: active
+run_id: af0bb5489df743e7832a7e128c43bfea
+run_name: respected-hound-819
+run_uuid: af0bb5489df743e7832a7e128c43bfea
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1692694761624
+status: 3
+tags: []
+user_id: ADMIN

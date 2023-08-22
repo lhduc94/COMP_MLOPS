@@ -19,7 +19,7 @@ import os
 from src.utils import get_env
 env = get_env()
 print(env)
-mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URL'])
+mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URI'])
 
 HyperParameters={
                     'iterations':1500, 
@@ -29,7 +29,6 @@ HyperParameters={
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--train-data",type=str,required=True)
-parser.add_argument("--test-tiny",type=str,default=None)
 # parser.add_argument("--model-path",type=str,required=True)
 # parser.add_argument("--processor-path", type=str,required=True)
 parser.add_argument("--iterations", type=int, default=HyperParameters['iterations'])

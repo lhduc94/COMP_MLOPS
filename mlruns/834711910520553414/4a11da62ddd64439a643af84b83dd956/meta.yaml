@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/Workspace/COMP_MLOPS/mlruns/834711910520553414/4a11da62ddd64439a643af84b83dd956/artifacts
+end_time: 1692694628385
+entry_point_name: ''
+experiment_id: '834711910520553414'
+lifecycle_stage: active
+run_id: 4a11da62ddd64439a643af84b83dd956
+run_name: aged-tern-973
+run_uuid: 4a11da62ddd64439a643af84b83dd956
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1692694628339
+status: 3
+tags: []
+user_id: ADMIN

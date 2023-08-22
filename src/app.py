@@ -13,10 +13,12 @@ from src.drift_detector import drift_psi
 from collections import Counter
 import mlflow 
 from src.utils import get_env, load_model_config
-
+import pickle 
 env = get_env()
 model_config = load_model_config(env)
 mlflow.set_tracking_uri(env['MLFLOW_TRACKING_URI'])
+DEFAULT_CONFIG_CHECKPOINTS = 'checkpoints'
+
 app = FastAPI()
 parser = argparse.ArgumentParser()
 parser.add_argument("--host",type=str, default="0.0.0.0")
@@ -32,12 +34,10 @@ phase3_prob1_feature_processor = Phase3Prob1FeatureProcessor()
 phase3_prob2_pretrained_model = mlflow.sklearn.load_model(f"models:/{PHASE3_PROB2['model_name']}/{PHASE3_PROB2['model_version']}")
 phase3_prob2_feature_processor = Phase3Prob2FeatureProcessor()
 
-with mlflow.start_run(run_id=PHASE3_PROB1['run_id']) as run:
-    artifact_uri = run.info.artifact_uri
-    var_count_phase3_prob1 = mlflow.artifacts.load_dict(artifact_uri + "/feature2_var_count.json")
-with mlflow.start_run(run_id=PHASE3_PROB2['run_id']) as run:
-    artifact_uri = run.info.artifact_uri
-    var_count_phase3_prob2 = mlflow.artifacts.load_dict(artifact_uri + "/feature2_var_count.json")
+with open(f'{DEFAULT_CONFIG_CHECKPOINTS}/phase-3/prob-1/varcount_v1.pkl','rb') as file:
+    var_count_phase3_prob1 = pickle.load(file)
+with open(f'{DEFAULT_CONFIG_CHECKPOINTS}/phase-3/prob-2/varcount_v1.pkl','rb') as file:
+    var_count_phase3_prob2 = pickle.load(file)
 @app.get('/')
 def home():
     return "The man Team"
